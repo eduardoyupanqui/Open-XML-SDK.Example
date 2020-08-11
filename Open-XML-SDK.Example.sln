@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30330.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXmlDemo", "src\OpenXmlDemo\OpenXmlDemo.csproj", "{8935D48C-6D07-42A7-BC3E-0DB8899A03FF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXmlDemo.Api", "src\OpenXmlDemo.Api\OpenXmlDemo.Api.csproj", "{A48EE965-54BF-4103-BE46-FADD70E0D3DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8935D48C-6D07-42A7-BC3E-0DB8899A03FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8935D48C-6D07-42A7-BC3E-0DB8899A03FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8935D48C-6D07-42A7-BC3E-0DB8899A03FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8935D48C-6D07-42A7-BC3E-0DB8899A03FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A48EE965-54BF-4103-BE46-FADD70E0D3DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A48EE965-54BF-4103-BE46-FADD70E0D3DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A48EE965-54BF-4103-BE46-FADD70E0D3DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A48EE965-54BF-4103-BE46-FADD70E0D3DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8BBF223A-A3DB-4031-B327-498600424D1D}
+	EndGlobalSection
+EndGlobal
