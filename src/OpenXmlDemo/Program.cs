@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
@@ -16,11 +17,11 @@ namespace OpenXmlDemo
             string sourceFile = Path.Combine("D:\\Word10.docx");
             string destinationFile = Path.Combine($"D:\\Word10-{Guid.NewGuid()}.docx");
             // Create a copy of the template file
-            File.Copy(sourceFile, destinationFile, true);
+            //File.Copy(sourceFile, destinationFile, true);
             //CreateTable(fileName);
             //SearchAndReplace(destinationFile);
 
-            File.WriteAllBytes(destinationFile, Replace3(sourceFile));
+            File.WriteAllBytes(destinationFile, Replace4(File.ReadAllBytes(sourceFile)));
             
 
             Console.WriteLine("Terminó!");
@@ -44,37 +45,37 @@ namespace OpenXmlDemo
                         new TopBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         },
                         new BottomBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         },
                         new LeftBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         },
                         new RightBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         },
                         new InsideHorizontalBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         },
                         new InsideVerticalBorder()
                         {
                             Val =
-                            new EnumValue<BorderValues>(BorderValues.Dashed),
+                            new EnumValue<BorderValues>(BorderValues.Thick),
                             Size = 24
                         }
                     )
@@ -203,16 +204,19 @@ namespace OpenXmlDemo
             using (MemoryStream stream = new MemoryStream(arrayBytes, true))
             using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
             {
-                string docText = null;
-                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                var document_ = wordDoc.MainDocumentPart.Document;
+
+                foreach (var text in document_.Descendants<Text>()) // <<< Here
                 {
-                    docText = sr.ReadToEnd();
+                    if (text.Text.Contains("@AQUI_SALUDO"))
+                    {
+                        Regex regexText = new Regex(@"@AQUI_SALUDO");
+                        text.Text = regexText.Replace(text.Text, "Hi Everyone!");
+                    }
                 }
-
-                Regex regexText = new Regex(@"@AQUI_SALUDO");
-                docText = regexText.Replace(docText, "Hi Everyone!");
-
+                wordDoc.Save();
                 //1) Si modifica el stream, defrente hacer el 
+                return stream.ToArray();
                 //2) else
                 using (MemoryStream ms = new MemoryStream())
                 {
