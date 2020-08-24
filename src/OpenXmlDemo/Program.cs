@@ -13,9 +13,16 @@ namespace OpenXmlDemo
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            string fileName = @"d:\Word10.docx";
+            string sourceFile = Path.Combine("D:\\Word10.docx");
+            string destinationFile = Path.Combine($"D:\\Word10-{Guid.NewGuid()}.docx");
+            // Create a copy of the template file
+            File.Copy(sourceFile, destinationFile, true);
             //CreateTable(fileName);
-            SearchAndReplace(fileName);
+            //SearchAndReplace(destinationFile);
+
+            File.WriteAllBytes(destinationFile, Replace3(sourceFile));
+            
+
             Console.WriteLine("Terminó!");
         }
 
@@ -106,7 +113,7 @@ namespace OpenXmlDemo
             }
         }
 
-
+        //https://docs.microsoft.com/en-us/office/open-xml/how-to-search-and-replace-text-in-a-document-part
         // To search and replace content in a document part.
         public static void SearchAndReplace(string document)
         {
@@ -124,6 +131,93 @@ namespace OpenXmlDemo
                 using (StreamWriter sw = new StreamWriter(wordDoc.MainDocumentPart.GetStream(FileMode.Create)))
                 {
                     sw.Write(docText);
+                }
+            }
+        }
+
+        //https://stackoverflow.com/a/18339407/2166103
+        public static void Replace1(string document)
+        {
+            using (WordprocessingDocument wordDoc =
+                      WordprocessingDocument.Open(@"yourpath\testdocument.docx", true))
+            {
+                var body = wordDoc.MainDocumentPart.Document.Body;
+                var paras = body.Elements<Paragraph>();
+
+                foreach (var para in paras)
+                {
+                    foreach (var run in para.Elements<Run>())
+                    {
+                        foreach (var text in run.Elements<Text>())
+                        {
+                            if (text.Text.Contains("@SALUDO"))
+                            {
+                                text.Text = text.Text.Replace("@SALUDO", "Hola");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void Replace2(string document) 
+        {
+            using (WordprocessingDocument wordDoc =
+                    WordprocessingDocument.Open(@"yourpath\testdocument.docx", true))
+            {
+                var document_ = wordDoc.MainDocumentPart.Document;
+
+                foreach (var text in document_.Descendants<Text>()) // <<< Here
+                {
+                    if (text.Text.Contains("@SALUDO"))
+                    {
+                        text.Text = text.Text.Replace("@SALUDO", "Hola");
+                    }
+                }
+            }
+        }
+        //Replace que retorna un array de bytes
+        public static byte[] Replace3(string document)
+        {
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(document, true))
+            {
+                string docText = null;
+                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                {
+                    docText = sr.ReadToEnd();
+                }
+
+                Regex regexText = new Regex(@"@AQUI_SALUDO");
+                docText = regexText.Replace(docText, "Hi Everyone!");
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    wordDoc.MainDocumentPart.GetStream(FileMode.Create).CopyTo(ms);
+                    return ms.ToArray();
+                }
+            }
+        }
+        //Replace que retorna un array de bytes
+        public static byte[] Replace4(byte[] arrayBytes)
+        {
+            using (MemoryStream stream = new MemoryStream(arrayBytes, true))
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
+            {
+                string docText = null;
+                using (StreamReader sr = new StreamReader(wordDoc.MainDocumentPart.GetStream()))
+                {
+                    docText = sr.ReadToEnd();
+                }
+
+                Regex regexText = new Regex(@"@AQUI_SALUDO");
+                docText = regexText.Replace(docText, "Hi Everyone!");
+
+                //1) Si modifica el stream, defrente hacer el 
+                //2) else
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    wordDoc.MainDocumentPart.GetStream(FileMode.Create).CopyTo(ms);
+                    return ms.ToArray();
                 }
             }
         }
