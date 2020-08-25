@@ -229,6 +229,7 @@ namespace OpenXmlDemo
             }
         }
 
+        //https://github.com/OfficeDev/Open-XML-SDK/issues/566
         public static byte[] Replace4Optimizado(byte[] arrayBytes)
         {
             using (MemoryStream stream = new MemoryStream(arrayBytes, true))
