@@ -229,6 +229,34 @@ namespace OpenXmlDemo
             }
         }
 
+        public static byte[] Replace4Optimizado(byte[] arrayBytes)
+        {
+            using (MemoryStream stream = new MemoryStream(arrayBytes, true))
+            {
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
+                {
+                    var document_ = wordDoc.MainDocumentPart.Document;
+                    using (OpenXmlReader reader = OpenXmlReader.Create(document_))
+                        while (reader.Read())
+                        {
+                            if (reader.ElementType == typeof(Text))
+                            {
+                                Text text = (Text)reader.LoadCurrentElement();
+                                //text = element.InnerText;
+                                //text = reader.GetText();
+                                if (text.Text.Contains("@AQUI_SALUDO"))
+                                {
+                                    Regex regexText = new Regex(@"@AQUI_SALUDO");
+                                    text.Text = regexText.Replace(text.Text, "Hi Everyone!");
+                                    break;//Quitar si se quiere en mas de un @AQUI_SALUDO
+                                }
+                            }
+                        }
+                }
+                return stream.ToArray();
+            }
+        }
+
         //With Open-Xml-PowerTools
         //https://github.com/EricWhiteDev/Open-Xml-PowerTools/blob/vNext/OpenXmlPowerToolsExamples/OpenXmlRegex02/OpenXmlRegex02.cs
         public static byte[] Replace5(byte[] arrayBytes)
