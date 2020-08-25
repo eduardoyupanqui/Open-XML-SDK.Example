@@ -7,5 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
+    <!--https://ci.appveyor.com/nuget/open-xml-powertools-->
+    <PackageReference Include="Open-Xml-PowerTools" Version="4.4.0" />
   </ItemGroup>
 </Project>

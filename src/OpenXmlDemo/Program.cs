@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+//using OpenXmlPowerTools;
 
 namespace OpenXmlDemo
 {
@@ -21,8 +22,9 @@ namespace OpenXmlDemo
             //CreateTable(fileName);
             //SearchAndReplace(destinationFile);
 
-            File.WriteAllBytes(destinationFile, Replace4(File.ReadAllBytes(sourceFile)));
-            
+            //File.WriteAllBytes(destinationFile, Replace4(File.ReadAllBytes(sourceFile)));
+            File.WriteAllBytes(destinationFile, Replace5(File.ReadAllBytes(sourceFile)));
+
 
             Console.WriteLine("Terminó!");
         }
@@ -161,7 +163,7 @@ namespace OpenXmlDemo
             }
         }
 
-        public static void Replace2(string document) 
+        public static void Replace2(string document)
         {
             using (WordprocessingDocument wordDoc =
                     WordprocessingDocument.Open(@"yourpath\testdocument.docx", true))
@@ -223,6 +225,27 @@ namespace OpenXmlDemo
                     wordDoc.MainDocumentPart.GetStream(FileMode.Create).CopyTo(ms);
                     return ms.ToArray();
                 }
+            }
+        }
+
+        //https://github.com/EricWhiteDev/Open-Xml-PowerTools/blob/vNext/OpenXmlPowerToolsExamples/OpenXmlRegex02/OpenXmlRegex02.cs
+        public static byte[] Replace5(byte[] arrayBytes)
+        {
+            using (MemoryStream stream = new MemoryStream(arrayBytes, true))
+            {
+                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(stream, true))
+                {
+                    //var xDoc = wDoc.MainDocumentPart.GetXDocument();
+                    var xDoc = OpenXmlPowerTools.PtOpenXmlExtensions.GetXDocument(wDoc.MainDocumentPart);
+
+                    var content = xDoc.Descendants(OpenXmlPowerTools.W.p);
+                    Regex regex = new Regex("@AQUI_SALUDO");
+                    OpenXmlPowerTools.OpenXmlRegex.Replace(content, regex, "Hi Everyone!", null);
+
+                    //wDoc.MainDocumentPart.PutXDocument();
+                    OpenXmlPowerTools.PtOpenXmlExtensions.PutXDocument(wDoc.MainDocumentPart);
+                }
+                return stream.ToArray();
             }
         }
     }
