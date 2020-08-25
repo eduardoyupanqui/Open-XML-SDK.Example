@@ -23,7 +23,7 @@ namespace OpenXmlDemo
             //SearchAndReplace(destinationFile);
 
             //File.WriteAllBytes(destinationFile, Replace4(File.ReadAllBytes(sourceFile)));
-            File.WriteAllBytes(destinationFile, Replace5(File.ReadAllBytes(sourceFile)));
+            File.WriteAllBytes(destinationFile, Replace4(File.ReadAllBytes(sourceFile)));
 
 
             Console.WriteLine("Terminó!");
@@ -204,30 +204,32 @@ namespace OpenXmlDemo
         public static byte[] Replace4(byte[] arrayBytes)
         {
             using (MemoryStream stream = new MemoryStream(arrayBytes, true))
-            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
             {
-                var document_ = wordDoc.MainDocumentPart.Document;
-
-                foreach (var text in document_.Descendants<Text>()) // <<< Here
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(stream, true))
                 {
-                    if (text.Text.Contains("@AQUI_SALUDO"))
+                    var document_ = wordDoc.MainDocumentPart.Document;
+
+                    foreach (var text in document_.Descendants<Text>()) // <<< Here
                     {
-                        Regex regexText = new Regex(@"@AQUI_SALUDO");
-                        text.Text = regexText.Replace(text.Text, "Hi Everyone!");
+                        if (text.Text.Contains("@AQUI_SALUDO"))
+                        {
+                            Regex regexText = new Regex(@"@AQUI_SALUDO");
+                            text.Text = regexText.Replace(text.Text, "Hi Everyone!");
+                        }
                     }
                 }
-                wordDoc.Save();
                 //1) Si modifica el stream, defrente hacer el 
                 return stream.ToArray();
                 //2) else
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    wordDoc.MainDocumentPart.GetStream(FileMode.Create).CopyTo(ms);
-                    return ms.ToArray();
-                }
+                //using (MemoryStream ms = new MemoryStream())
+                //{
+                //    wordDoc.MainDocumentPart.GetStream(FileMode.Create).CopyTo(ms);
+                //    return ms.ToArray();
+                //}
             }
         }
 
+        //With Open-Xml-PowerTools
         //https://github.com/EricWhiteDev/Open-Xml-PowerTools/blob/vNext/OpenXmlPowerToolsExamples/OpenXmlRegex02/OpenXmlRegex02.cs
         public static byte[] Replace5(byte[] arrayBytes)
         {
